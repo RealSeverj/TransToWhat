@@ -7,7 +7,9 @@ import TranslatoerView from './views/TranslatoerView.vue';
   <div class="app-container">
     <HeaderView />
     <main>
-      <TranslatoerView />
+      <div style="margin-right: 5%;">
+        <TranslatoerView />
+      </div>
     </main>
     <footer>
       <p>© 2025 TransToWhat | 你要翻译个啥</p>

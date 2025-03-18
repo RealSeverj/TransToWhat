@@ -107,6 +107,39 @@ const clearText = () => {
   translatedText.value = '';
   errorMessage.value = '';
 };
+
+const copyToClipboard = () => {
+  if (!translatedText.value) return;
+  
+  // 创建一个临时文本区域
+  const textArea = document.createElement('textarea');
+  textArea.value = translatedText.value;
+  
+  // 确保不会滚动到视图之外
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  textArea.style.top = '0';
+  
+  document.body.appendChild(textArea);
+  textArea.select();
+  
+  try {
+    // 执行复制命令
+    const successful = document.execCommand('copy');
+    
+    if (successful) {
+      // 可以添加一个提示或状态显示（可选）
+      console.log('复制成功');
+    } else {
+      console.error('复制失败');
+    }
+  } catch (err) {
+    console.error('复制操作出错', err);
+  }
+  
+  // 清理DOM
+  document.body.removeChild(textArea);
+};
 </script>
 
 <template>
@@ -149,7 +182,7 @@ const clearText = () => {
         ></textarea>
         <button 
           class="copy-btn" 
-          @click="() => navigator.clipboard.writeText(translatedText)" 
+          @click="copyToClipboard" 
           :disabled="!translatedText"
           title="复制到剪贴板"
         >
@@ -275,7 +308,7 @@ const clearText = () => {
 }
 
 textarea {
-  width: 100%;
+  width: 90%;
   height: 100%;
   padding: 1.25rem;
   border: none;
@@ -345,27 +378,78 @@ textarea:focus {
   color: #e53935;
 }
 
+/* 移动端适配优化 */
 @media (max-width: 768px) {
-  .translation-area {
-    grid-template-columns: 1fr;
-  }
-  
-  .translator-divider {
-    height: 40px;
-    transform: rotate(90deg);
+  .translator-container {
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
   }
   
   .translator-header {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: 1.5rem;
   }
   
   .style-selector {
     width: 100%;
+    margin-top: 0.5rem;
   }
   
   .style-selector select {
     flex: 1;
+    width: 100%;
+  }
+  
+  .translation-area {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .text-container {
+    height: 200px;
+  }
+  
+  .translator-divider {
+    height: auto;
+    padding: 0.5rem 0;
+    transform: none;
+  }
+  
+  .translator-divider .arrow {
+    transform: rotate(90deg);
+    display: block;
+    font-size: 2rem;
+  }
+  
+  .translation-loader {
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.5rem 0;
+  }
+  
+  .translation-loader span {
+    margin-left: 0.5rem;
+  }
+}
+
+/* 额外添加小屏幕设备的适配 */
+@media (max-width: 480px) {
+  .translator-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .translator-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .text-container {
+    height: 180px;
+  }
+  
+  textarea {
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
 </style>
